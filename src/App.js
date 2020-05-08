@@ -1,23 +1,43 @@
-import React from 'react';
+import React, { useRef, useEffect, useCallback } from 'react';
 import logo from './logo.svg';
 import './App.css';
+import { Keyboard, KeyboardLayout, KeyboardButton } from '@ncr-design-system/keyboard-react'
+
+
 
 function App() {
+
+  const appRef = useRef(null);
+
+  const onKeyboardAction = useCallback((event) => {
+
+    const action = event.detail;
+    if (action === 'enter') {
+      // preform submit
+      document.activeElement.closest('form').submit();
+    }
+  });
+
+  useEffect(() => {
+    appRef.current.addEventListener('keyboardActionDispatch', onKeyboardAction);
+
+    return () => { appRef.current.removeEventListener('keyboardActionDispatch', onKeyboardAction) }
+  }, []);
+
   return (
-    <div className="App">
+    <div className="App" ref={appRef}>
       <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
+        <form>
+          <div>
+            <input className="global-keyboard" type='text' />
+          </div>
+          <div>
+            <input className="global-keyboard" type='text' />
+          </div>
+        </form>
+        <Keyboard global={true} maxWidth='100%' autoOpenClose >
+          <KeyboardLayout layout='condensedNumpad' language='english' minHeight='300px' />
+        </Keyboard>
       </header>
     </div>
   );
